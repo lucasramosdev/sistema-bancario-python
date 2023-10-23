@@ -1,30 +1,33 @@
 import datetime
+from system import Observador
 
-class ContaBancaria:
+class ContaBancaria(Observador):
     LIMITE_SAQUES = 3
-    def __init__(self) -> None:
+    AGENCIA = "0001"
+    def __init__(self, cpf, id) -> None:
         self.saldo = 0
         self.limite = 500
         self.movimentacoes = ""
         self.numero_saques = 0
+        self.cpf = cpf
+        self.id = id
 
-    def OperacaoSaque(self):
-        valor = float(input("Informe um valor que deseja sacar: "))
+    def OperacaoSaque(self, *, valor):
         self.__sacar__(valor)
         print(f'R$ {valor:.2f} sacado com sucesso!')
     
-    def OperacaoDeposito(self):
-        valor = float(input("Informe um valor que deseja depositar: "))
+    def OperacaoDeposito(self, valor, /):
         self.__depositar__(valor)
         print(f'R$ {valor:.2f} despositado com sucesso!')
     
-    def ConsultarExtrato(self):
+    def ConsultarExtrato(self, saldo, /, *, movimentacoes):
         print(f"""
     {'EXTRATO BANCÁRIO'.center(50, '-')}
+    {f'CONTA: {self.AGENCIA}-{self.id}'.center(50, ' ')}
     
-    {self.movimentacoes if self.movimentacoes != "" else "Não há movimentações"}
+    {movimentacoes if movimentacoes != "" else "Não há movimentações"}
 
-    SALDO: R$ {self.saldo:.2f} - NÚMERO DE SAQUES RESTANTES: {self.LIMITE_SAQUES - self.numero_saques}
+    SALDO: R$ {saldo:.2f} - NÚMERO DE SAQUES RESTANTES: {self.LIMITE_SAQUES - self.numero_saques}
     {'-' * 50}
 """)
 
@@ -60,6 +63,3 @@ class ContaBancaria:
 class MovimentacaoException(Exception):
     def __init__(self, message) -> None:
         super().__init__(message)
-    
-
-        
